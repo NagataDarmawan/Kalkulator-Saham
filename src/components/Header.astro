@@ -3,8 +3,8 @@
     <h1 class="text-xl font-bold text-emerald-400 tracking-wide flex items-center gap-2">
       <span class="text-white">Kalkulator</span> Saham
     </h1>
-    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium">
-      Live Mode
+    <span id="liveModeBadge" class="text-xs px-2.5 py-1 rounded-full font-medium transition-colors duration-300">
+      Mengecek...
     </span>
   </div>
 </header>
@@ -47,3 +47,42 @@
     }
   </script>
 </div>
+
+<script>
+  function updateMarketStatus() {
+    const badge = document.getElementById('liveModeBadge');
+    if (!badge) return;
+
+    // Mendapatkan waktu saat ini berdasarkan Zona Waktu Asia/Jakarta (WIB)
+    const options = { timeZone: 'Asia/Jakarta', hour12: false };
+    const wibDateStr = new Date().toLocaleString('en-US', options);
+    const wibDate = new Date(wibDateStr);
+
+    const hari = wibDate.getDay(); // 0 = Minggu, 1 = Senin, ..., 6 = Sabtu
+    const jam = wibDate.getHours();
+    const menit = wibDate.getMinutes();
+
+    // Konversi waktu bursa ke total menit dari jam 00:00 demi akurasi
+    const waktuSekarangMenit = (jam * 60) + menit;
+    const bursaBukaMenit = 9 * 60;       // 09:00 WIB
+    const bursaTutupMenit = 16 * 60;     // 16:00 WIB
+
+    // Logika: Senin s/d Jumat (1-5) dan di antara jam 09:00 - 16:00 WIB
+    const isMarketOpen = (hari >= 1 && hari <= 5) && (waktuSekarangMenit >= bursaBukaMenit && waktuSekarangMenit < bursaTutupMenit);
+
+    if (isMarketOpen) {
+      badge.innerText = "Live Mode (Open)";
+      badge.className = "text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium transition-colors duration-300";
+    } else {
+      badge.innerText = "Market Closed";
+      badge.className = "text-xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-full font-medium transition-colors duration-300";
+    }
+  }
+
+  // Jalankan saat halaman pertama kali dimuat
+  document.addEventListener('DOMContentLoaded', () => {
+    updateMarketStatus();
+    // Perbarui otomatis setiap 1 menit tanpa perlu refresh halaman
+    setInterval(updateMarketStatus, 60000);
+  });
+</script>
