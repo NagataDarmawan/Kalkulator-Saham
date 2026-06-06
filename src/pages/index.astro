@@ -25,8 +25,8 @@ import '../styles/global.css';
         <button id="mainTabCalc" class="whitespace-nowrap text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg transition shadow-sm cursor-pointer bg-emerald-600 text-white">
           Kalkulator Saham
         </button>
-        <button id="mainTabGlobal" class="whitespace-nowrap text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg text-gray-400 hover:text-emerald-400 transition cursor-pointer">
-          Global
+        <button id="mainTabInfoPasar" class="whitespace-nowrap text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg text-gray-400 hover:text-emerald-400 transition cursor-pointer">
+          Info Pasar
         </button>
       </div>
     </div>
@@ -92,7 +92,7 @@ import '../styles/global.css';
       </div>
     </div>
 
-    <div id="bodyGlobal" class="w-full hidden px-4 md:px-8">
+    <div id="bodyInfoPasar" class="w-full hidden px-4 md:px-8">
       
       <div class="w-full grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pb-4 border-b border-gray-800 pt-4">
         <button data-global-tab="market-caps" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center order-first col-span-2 sm:order-none sm:col-span-1">
@@ -167,27 +167,27 @@ import '../styles/global.css';
   // --- CONTROL UTAMA PANEL SWITCHER (KALKULATOR VS GLOBAL) ---
   function initMainSwitcher() {
     const mainTabCalc = document.getElementById('mainTabCalc');
-    const mainTabGlobal = document.getElementById('mainTabGlobal');
+    const mainTabInfoPasar = document.getElementById('mainTabInfoPasar');
     const bodyKalkulator = document.getElementById('bodyKalkulator');
-    const bodyGlobal = document.getElementById('bodyGlobal');
+    const bodyInfoPasar = document.getElementById('bodyInfoPasar');
 
     mainTabCalc?.addEventListener('click', () => {
       mainTabCalc.classList.add('bg-emerald-600', 'text-white');
       mainTabCalc.classList.remove('text-gray-400', 'hover:text-emerald-400');
-      mainTabGlobal?.classList.remove('bg-emerald-600', 'text-white');
-      mainTabGlobal?.classList.add('text-gray-400', 'hover:text-emerald-400');
+      mainTabInfoPasar?.classList.remove('bg-emerald-600', 'text-white');
+      mainTabInfoPasar?.classList.add('text-gray-400', 'hover:text-emerald-400');
 
       bodyKalkulator?.classList.replace('hidden', 'block');
-      bodyGlobal?.classList.replace('block', 'hidden');
+      bodyInfoPasar?.classList.replace('block', 'hidden');
     });
 
-    mainTabGlobal?.addEventListener('click', () => {
-      mainTabGlobal.classList.add('bg-emerald-600', 'text-white');
-      mainTabGlobal.classList.remove('text-gray-400', 'hover:text-emerald-400');
+    mainTabInfoPasar?.addEventListener('click', () => {
+      mainTabInfoPasar.classList.add('bg-emerald-600', 'text-white');
+      mainTabInfoPasar.classList.remove('text-gray-400', 'hover:text-emerald-400');
       mainTabCalc?.classList.remove('bg-emerald-600', 'text-white');
       mainTabCalc?.classList.add('text-gray-400', 'hover:text-emerald-400');
 
-      bodyGlobal?.classList.replace('hidden', 'block');
+      bodyInfoPasar?.classList.replace('hidden', 'block');
       bodyKalkulator?.classList.replace('block', 'hidden');
     });
   }
