@@ -1,0 +1,49 @@
+<header class="w-full border-b border-gray-800 bg-[#0E1424] py-4">
+  <div class="w-full max-w-full px-4 md:px-8 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-emerald-400 tracking-wide flex items-center gap-2">
+      <span class="text-white">Kalkulator</span> Saham
+    </h1>
+    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium">
+      Live Mode
+    </span>
+  </div>
+</header>
+
+<div class="w-full tradingview-widget-container border-b border-gray-800 bg-[#090d16] overflow-hidden">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+      "symbols": [
+        {
+          "proName": "IDX:COMPOSITE",
+          "title": "IHSG"
+        },
+        {
+          "proName": "IDX:LQ45",
+          "title": "LQ45"
+        },
+        {
+          "description": "BBCA",
+          "proName": "IDX:BBCA"
+        },
+        {
+          "description": "BBRI",
+          "proName": "IDX:BBRI"
+        },
+        {
+          "description": "BMRI",
+          "proName": "IDX:BMRI"
+        },
+        {
+          "description": "BBNI",
+          "proName": "IDX:BBNI"
+        }
+      ],
+      "showSymbolLogo": true,
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "displayMode": "adaptive",
+      "locale": "id"
+    }
+  </script>
+</div>

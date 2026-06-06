@@ -1,0 +1,109 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AraArb from '../components/AraArb.astro';
+import AverageDown from '../components/AverageDown.astro';
+import RiskManagement from '../components/RiskManagement.astro';
+import NetProfit from '../components/NetProfit.astro';
+import EstimasiDividen from '../components/EstimasiDividen.astro';
+
+// Pastikan path ini sesuai dengan tempat Anda menyimpan file CSS utama Tailwind v4 Anda
+import '../styles/global.css'; 
+---
+
+<Layout>
+  <div class="w-full min-h-[100dvh] bg-[#090D16] px-4 md:px-8 pb-8 flex flex-col gap-4">
+    
+    <div class="w-full flex gap-2 pb-4 mb-2 border-b border-gray-800 overflow-x-auto no-scrollbar whitespace-nowrap pt-4 ios-scroll">
+      <button data-tab="ara-arb" class="tab-btn bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+        ARA / ARB
+      </button>
+      <button data-tab="net-profit" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+        Net Profit & Loss
+      </button>
+      <button data-tab="average-down" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+        Average Down
+      </button>
+      <button data-tab="risk-management" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+        Risk Management
+      </button>
+      <button data-tab="dividen" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+        Estimasi Dividen
+      </button>
+    </div>
+
+    <input type="hidden" id="feeBeli" value="0.15" />
+    <input type="hidden" id="feeJual" value="0.25" />
+
+    <div id="tab-contents" class="w-full">
+      <div id="content-ara-arb" class="tab-content block w-full">
+        <AraArb />
+      </div>
+      
+      <div id="content-net-profit" class="tab-content hidden w-full">
+        <NetProfit />
+      </div>
+
+      <div id="content-average-down" class="tab-content hidden w-full">
+        <AverageDown />
+      </div>
+      
+      <div id="content-risk-management" class="tab-content hidden w-full">
+        <RiskManagement />
+      </div>
+
+      <div id="content-dividen" class="tab-content hidden w-full">
+        <EstimasiDividen />
+      </div>
+    </div>
+
+  </div>
+</Layout>
+
+<script>
+  // Logika Switch Tab Konten
+  const tabs = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetTab = tab.getAttribute('data-tab');
+
+      // Reset semua tombol tab ke style non-aktif
+      tabs.forEach(t => {
+        t.classList.remove('bg-emerald-600', 'text-white');
+        t.classList.add('bg-[#0E1424]', 'text-gray-400');
+      });
+
+      // Set tombol aktif
+      tab.classList.remove('bg-[#0E1424]', 'text-gray-400');
+      tab.classList.add('bg-emerald-600', 'text-white');
+
+      // Sembunyikan semua konten, tampilkan yang dipilih
+      contents.forEach(content => {
+        if (content.id === `content-${targetTab}`) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+        } else {
+          content.classList.remove('block');
+          content.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  /* Menghilangkan scrollbar di mobile untuk menu horizontal tab agar tampak rapi */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Dukungan momentum scrolling empuk untuk iOS Safari */
+  .ios-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+</style>

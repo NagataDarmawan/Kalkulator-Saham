@@ -1,0 +1,57 @@
+<div id="dividen-feature" class="w-full flex flex-col gap-4">
+  <div class="w-full bg-[#0E1424] border border-gray-800 p-4 md:p-6 rounded-xl flex flex-col gap-4">
+    <h3 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Kalkulator Estimasi Pendapatan Dividen</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 font-semibold">Harga Saham Saat Ini</label>
+        <input type="number" id="divHargaSaham" placeholder="Contoh: 4500" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 font-semibold">DPS (Dividen Per Lembar)</label>
+        <input type="number" id="divDPS" placeholder="Contoh: 150" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 font-semibold">Jumlah Lot Kepemilikan</label>
+        <input type="number" id="divLot" placeholder="Contoh: 100" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="flex items-end">
+        <button id="btnHitungDividen" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition cursor-pointer text-sm">
+          Kalkulasi Dividen
+        </button>
+      </div>
+    </div>
+
+    <div id="divHasilContainer" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 border-t border-gray-800 pt-4">
+      <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 text-center">
+        <div class="text-xs text-gray-400 font-semibold uppercase mb-1">Dividend Yield</div>
+        <div id="divYield" class="text-md md:text-lg font-bold text-emerald-400">-</div>
+      </div>
+      <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 text-center">
+        <div class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Dividen Cair Ke RDN</div>
+        <div id="divTotalCair" class="text-md md:text-lg font-bold text-white">-</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('btnHitungDividen')?.addEventListener('click', () => {
+    const hargaSaham = parseFloat((document.getElementById('divHargaSaham') as HTMLInputElement).value);
+    const dps = parseFloat((document.getElementById('divDPS') as HTMLInputElement).value);
+    const lot = parseFloat((document.getElementById('divLot') as HTMLInputElement).value);
+
+    if (!hargaSaham || !dps || !lot) {
+      alert('Isi semua data instrumen dividen!');
+      return;
+    }
+
+    const dividendYield = (dps / hargaSaham) * 100;
+    const totalDividenDiterima = dps * (lot * 100); // Dividen di pasar modal Indonesia bersih bebas pajak untuk individu sejak UU Ciptaker
+
+    document.getElementById('divYield')!.innerText = `${dividendYield.toFixed(2)}%`;
+    document.getElementById('divTotalCair')!.innerText = `Rp ${totalDividenDiterima.toLocaleString('id-ID')}`;
+
+    document.getElementById('divHasilContainer')?.classList.remove('hidden');
+  });
+</script>

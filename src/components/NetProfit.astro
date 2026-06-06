@@ -1,0 +1,82 @@
+<div id="net-profit-feature" class="w-full flex flex-col gap-4">
+  <div class="w-full bg-[#0E1424] border border-gray-800 p-4 md:p-6 rounded-xl flex flex-col gap-4">
+    <h3 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Kalkulator Realized Net Profit & Loss</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 font-semibold">Harga Beli (Avg Price)</label>
+        <input type="number" id="npHargaBeli" placeholder="Contoh: 1000" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 font-semibold">Harga Jual (Target Price)</label>
+        <input type="number" id="npHargaJual" placeholder="Contoh: 1100" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 font-semibold">Jumlah Lot</label>
+        <input type="number" id="npLot" placeholder="Contoh: 100" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500" />
+      </div>
+      <div class="flex items-end">
+        <button id="btnHitungNP" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg transition cursor-pointer text-sm">
+          Hitung Profit / Loss
+        </button>
+      </div>
+    </div>
+
+    <div id="npHasilContainer" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 border-t border-gray-800 pt-4">
+      <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 text-center">
+        <div class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Modal Bersih</div>
+        <div id="npTotalModal" class="text-md md:text-lg font-bold text-white">-</div>
+      </div>
+      <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 text-center">
+        <div class="text-xs text-gray-400 font-semibold uppercase mb-1">Total Penjualan Bersih</div>
+        <div id="npTotalJual" class="text-md md:text-lg font-bold text-white">-</div>
+      </div>
+      <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 text-center">
+        <div class="text-xs text-gray-400 font-semibold uppercase mb-1">Net Profit / Loss</div>
+        <div id="npNetReturn" class="text-md md:text-lg font-bold">-</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('btnHitungNP')?.addEventListener('click', () => {
+    const hargaBeli = parseFloat((document.getElementById('npHargaBeli') as HTMLInputElement).value);
+    const hargaJual = parseFloat((document.getElementById('npHargaJual') as HTMLInputElement).value);
+    const lot = parseFloat((document.getElementById('npLot') as HTMLInputElement).value);
+    
+    // Mengambil nilai fee broker dari komponen utama/global jika ada, default ke standar bursa
+    const feeBeliPct = parseFloat((document.getElementById('feeBeli') as HTMLInputElement)?.value || '0.15') / 100;
+    const feeJualPct = parseFloat((document.getElementById('feeJual') as HTMLInputElement)?.value || '0.25') / 100;
+
+    if (!hargaBeli || !hargaJual || !lot) {
+      alert('Mohon isi semua data inputan!');
+      return;
+    }
+
+    const nilaiBeliKotor = hargaBeli * lot * 100;
+    const nominalFeeBeli = nilaiBeliKotor * feeBeliPct;
+    const totalModalBersih = nilaiBeliKotor + nominalFeeBeli;
+
+    const nilaiJualKotor = hargaJual * lot * 100;
+    const nominalFeeJual = nilaiJualKotor * feeJualPct;
+    const totalJualBersih = nilaiJualKotor - nominalFeeJual;
+
+    const netProfitLoss = totalJualBersih - totalModalBersih;
+    const ROI = (netProfitLoss / totalModalBersih) * 100;
+
+    document.getElementById('npTotalModal')!.innerText = `Rp ${Math.round(totalModalBersih).toLocaleString('id-ID')}`;
+    document.getElementById('npTotalJual')!.innerText = `Rp ${Math.round(totalJualBersih).toLocaleString('id-ID')}`;
+    
+    const elementReturn = document.getElementById('npNetReturn')!;
+    if (netProfitLoss >= 0) {
+      elementReturn.className = "text-md md:text-lg font-bold text-emerald-400";
+      elementReturn.innerText = `+Rp ${Math.round(netProfitLoss).toLocaleString('id-ID')} (${ROI.toFixed(2)}%)`;
+    } else {
+      elementReturn.className = "text-md md:text-lg font-bold text-rose-400";
+      elementReturn.innerText = `-Rp ${Math.abs(Math.round(netProfitLoss)).toLocaleString('id-ID')} (${ROI.toFixed(2)}%)`;
+    }
+
+    document.getElementById('npHasilContainer')?.classList.remove('hidden');
+  });
+</script>
