@@ -31,7 +31,7 @@ import '../styles/global.css';
       </div>
     </div>
 
-    <div id="bodyKalkulator" class="w-full block px-4 md:px-8">
+    <div id="bodyKalkulator" class="w-full block px-1 md:px-1">
       
       <div class="w-full bg-[#0E1424] border border-gray-800 p-4 rounded-xl flex flex-col gap-3 mt-4">
         <div class="grid grid-cols-2 gap-4">
@@ -94,21 +94,22 @@ import '../styles/global.css';
 
     <div id="bodyGlobal" class="w-full hidden px-4 md:px-8">
       
-      <div class="w-full flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 border-b border-gray-800 pt-4 scroll-smooth -webkit-overflow-scrolling-touch">
-        <button data-global-tab="index-dunia" class="global-tab-btn bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer whitespace-nowrap">
+      <div class="w-full grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pb-4 border-b border-gray-800 pt-4">
+        <button data-global-tab="market-caps" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center order-first col-span-2 sm:order-none sm:col-span-1">
+          Top Market Caps BEI
+        </button>
+        
+        <button data-global-tab="index-dunia" class="global-tab-btn bg-emerald-600 text-white px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Index Dunia
         </button>
-        <button data-global-tab="commodities" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer whitespace-nowrap">
+        <button data-global-tab="commodities" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Commodities
         </button>
-        <button data-global-tab="kurs" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer whitespace-nowrap">
+        <button data-global-tab="kurs" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Kurs
         </button>
-        <button data-global-tab="dividen-bei" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer whitespace-nowrap">
+        <button data-global-tab="dividen-bei" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Saham Dividen
-        </button>
-        <button data-global-tab="market-caps" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer whitespace-nowrap">
-          Top Market Caps BEI
         </button>
       </div>
 
