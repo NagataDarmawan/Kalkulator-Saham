@@ -13,26 +13,45 @@ import '../styles/global.css';
 <Layout>
   <div class="w-full min-h-[100dvh] bg-[#090D16] px-4 md:px-8 pb-8 flex flex-col gap-4">
     
-    <div class="w-full flex gap-2 pb-4 mb-2 border-b border-gray-800 overflow-x-auto no-scrollbar whitespace-nowrap pt-4 ios-scroll">
-      <button data-tab="ara-arb" class="tab-btn bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+    <div class="w-full bg-[#0E1424] border border-gray-800 p-4 rounded-xl flex flex-col gap-3 mt-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1 font-semibold">Fee Beli Sekuritas (%)</label>
+          <input type="number" id="feeBeli" value="0.15" step="0.01" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1 font-semibold">Fee Jual Sekuritas (%)</label>
+          <input type="number" id="feeJual" value="0.25" step="0.01" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 mt-1">
+        <button id="btnBatalFee" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold py-2 rounded-lg transition cursor-pointer text-center">
+          Reset (Batal)
+        </button>
+        <button id="btnSimpanFee" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 rounded-lg transition cursor-pointer text-center shadow-md">
+          Simpan Permanen
+        </button>
+      </div>
+    </div>
+
+    <div class="w-full grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pb-4 border-b border-gray-800 pt-2">
+      <button data-tab="ara-arb" class="tab-btn bg-emerald-600 text-white px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center col-span-2 sm:col-span-1">
         ARA / ARB
       </button>
-      <button data-tab="net-profit" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+      <button data-tab="net-profit" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
         Net Profit & Loss
       </button>
-      <button data-tab="average-down" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+      <button data-tab="average-down" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
         Average Down
       </button>
-      <button data-tab="risk-management" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+      <button data-tab="risk-management" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
         Risk Management
       </button>
-      <button data-tab="dividen" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-4 py-2 rounded-lg font-medium text-sm transition cursor-pointer">
+      <button data-tab="dividen" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
         Estimasi Dividen
       </button>
     </div>
-
-    <input type="hidden" id="feeBeli" value="0.15" />
-    <input type="hidden" id="feeJual" value="0.25" />
 
     <div id="tab-contents" class="w-full">
       <div id="content-ara-arb" class="tab-content block w-full">
@@ -60,7 +79,41 @@ import '../styles/global.css';
 </Layout>
 
 <script>
-  // Logika Switch Tab Konten
+  const inputFeeBeli = document.getElementById('feeBeli') as HTMLInputElement;
+  const inputFeeJual = document.getElementById('feeJual') as HTMLInputElement;
+  const btnSimpan = document.getElementById('btnSimpanFee');
+  const btnBatal = document.getElementById('btnBatalFee');
+
+  // 1. OTOMATIS LOAD: Saat aplikasi dibuka, cek apakah user punya simpanan fee kustom di HP-nya
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedFeeBeli = localStorage.getItem('customFeeBeli');
+    const savedFeeJual = localStorage.getItem('customFeeJual');
+
+    if (savedFeeBeli) inputFeeBeli.value = savedFeeBeli;
+    if (savedFeeJual) inputFeeJual.value = savedFeeJual;
+  });
+
+  // 2. LOGIKA SIMPAN: Mengunci angka inputan ke dalam LocalStorage browser
+  btnSimpan?.addEventListener('click', () => {
+    if (!inputFeeBeli.value || !inputFeeJual.value) {
+      alert('Nilai fee tidak boleh kosong!');
+      return;
+    }
+    localStorage.setItem('customFeeBeli', inputFeeBeli.value);
+    localStorage.setItem('customFeeJual', inputFeeJual.value);
+    alert('Fee sekuritas berhasil disimpan permanen! 👍');
+  });
+
+  // 3. LOGIKA BATAL / RESET: Kembalikan ke persentase default bursa reguler
+  btnBatal?.addEventListener('click', () => {
+    inputFeeBeli.value = "0.15";
+    inputFeeJual.value = "0.25";
+    localStorage.removeItem('customFeeBeli');
+    localStorage.removeItem('customFeeJual');
+    alert('Fee dikembalikan ke setelan default reguler ($0.15% / $0.25%)');
+  });
+
+  // 4. Logika Switch Tab Konten (Tetap Sama)
   const tabs = document.querySelectorAll('.tab-btn');
   const contents = document.querySelectorAll('.tab-content');
 
@@ -68,17 +121,14 @@ import '../styles/global.css';
     tab.addEventListener('click', () => {
       const targetTab = tab.getAttribute('data-tab');
 
-      // Reset semua tombol tab ke style non-aktif
       tabs.forEach(t => {
         t.classList.remove('bg-emerald-600', 'text-white');
         t.classList.add('bg-[#0E1424]', 'text-gray-400');
       });
 
-      // Set tombol aktif
       tab.classList.remove('bg-[#0E1424]', 'text-gray-400');
       tab.classList.add('bg-emerald-600', 'text-white');
 
-      // Sembunyikan semua konten, tampilkan yang dipilih
       contents.forEach(content => {
         if (content.id === `content-${targetTab}`) {
           content.classList.remove('hidden');
@@ -93,17 +143,13 @@ import '../styles/global.css';
 </script>
 
 <style>
-  /* Menghilangkan scrollbar di mobile untuk menu horizontal tab agar tampak rapi */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  /* Dukungan momentum scrolling empuk untuk iOS Safari */
-  .ios-scroll {
-    -webkit-overflow-scrolling: touch;
+  .no-spinner {
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
 </style>

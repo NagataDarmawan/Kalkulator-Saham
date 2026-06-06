@@ -4,14 +4,14 @@
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 flex flex-col gap-3">
-        <span class="text-xs font-bold text-blue-400 uppercase tracking-wide">Kepemilikan Saat Ini (Lama)</span>
+        <span class="text-xs font-bold text-gray-300 uppercase tracking-wide">Kepemilikan Saat Ini (Lama)</span>
         <div>
           <label class="block text-xs text-gray-400 mb-1">Harga Rata-Rata Lama</label>
-          <input type="number" id="avgHargaLama" placeholder="Contoh: 1500" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+          <input type="number" id="avgHargaLama" placeholder="Contoh: 1500" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
         </div>
         <div>
           <label class="block text-xs text-gray-400 mb-1">Jumlah Lot Lama</label>
-          <input type="number" id="avgLotLama" placeholder="Contoh: 50" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+          <input type="number" id="avgLotLama" placeholder="Contoh: 50" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
         </div>
       </div>
 
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <button id="btnHitungAvg" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg transition cursor-pointer text-sm font-semibold shadow-md">
+    <button id="btnHitungAvg" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition cursor-pointer text-sm font-semibold shadow-md">
       Hitung Rata-Rata Baru
     </button>
 
@@ -55,13 +55,16 @@
     const lotLama = parseFloat((document.getElementById('avgLotLama') as HTMLInputElement).value);
     const hargaBaru = parseFloat((document.getElementById('avgHargaBaru') as HTMLInputElement).value);
     const lotBaru = parseFloat((document.getElementById('avgLotBaru') as HTMLInputElement).value);
+    
+    // KUNCI SINKRONISASI: Menangkap ID feeBeli global dari index.astro secara presisi
     const feeBeliPct = parseFloat((document.getElementById('feeBeli') as HTMLInputElement)?.value || '0.15') / 100;
 
-    if (!hargaLama || !lotLama || !hargaBaru || !lotBaru) {
-      alert('Lengkapi semua parameter harga dan jumlah lot!');
+    if (!hargaLama || !lotLama || !hargaBaru || !lotBaru || hargaLama <= 0 || lotLama <= 0 || hargaBaru <= 0 || lotBaru <= 0) {
+      alert('Lengkapi semua parameter harga dan jumlah lot dengan valid!');
       return;
     }
 
+    // Perhitungan kalkulasi modal (Lot Lama sudah berasumsi bersih, Lot Baru dikenakan fee beli berjalan)
     const modalLamaKotor = hargaLama * lotLama * 100;
     const modalBaruKotor = hargaBaru * lotBaru * 100;
     const totalModalBersih = (modalLamaKotor + modalBaruKotor) + (modalBaruKotor * feeBeliPct);
@@ -69,10 +72,23 @@
     const totalLotGabungan = lotLama + lotBaru;
     const avgHargaFinal = totalModalBersih / (totalLotGabungan * 100);
 
-    document.getElementById('avgTotalLot')!.innerText = `${totalLotGabungan} Lot`;
+    // Kirim data hasil kalkulasi ke UI layout masing-masing box
+    document.getElementById('avgTotalLot')!.innerText = `${totalLotGabungan.toLocaleString('id-ID')} Lot`;
     document.getElementById('avgTotalModal')!.innerText = `Rp ${Math.round(totalModalBersih).toLocaleString('id-ID')}`;
     document.getElementById('avgHargaFinal')!.innerText = `Rp ${Math.round(avgHargaFinal).toLocaleString('id-ID')}`;
 
     document.getElementById('avgHasilContainer')?.classList.remove('hidden');
   });
 </script>
+
+<style>
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .no-spinner {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+</style>
