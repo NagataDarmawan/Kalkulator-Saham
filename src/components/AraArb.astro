@@ -3,19 +3,27 @@
   <div class="w-full flex-1 bg-[#0E1424] border border-gray-800 p-4 md:p-6 rounded-xl flex flex-col gap-4 min-h-0">
     <h3 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2 flex-none">Hitung ARA & ARB Beruntun (Fraksi BEI)</h3>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-2 flex-none">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-2 flex-none">
       <div>
-        <label class="block text-xs md:text-sm text-gray-400 mb-1">Harga Penutupan Sebelumnya</label>
-        <input type="number" id="hargaSebut" placeholder="Contoh: 5000" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500" />
+        <label class="block text-xs md:text-sm text-gray-400 mb-1">Harga Penutupan</label>
+        <input type="number" id="hargaSebut" placeholder="Contoh: 5000" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
       </div>
       
       <div>
-        <label class="block text-xs md:text-sm text-gray-400 mb-1">Jumlah Hari ARA/ARB Jilid</label>
-        <input type="number" id="jumlahHari" value="5" min="1" max="10" placeholder="Maksimal 10" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500" />
+        <label class="block text-xs md:text-sm text-gray-400 mb-1">Pilih Tipe Batasan</label>
+        <select id="tipeBatas" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <option value="ARA" class="bg-[#0E1424]">ARA (Auto Reject Atas)</option>
+          <option value="ARB" class="bg-[#0E1424]">ARB (Auto Reject Bawah)</option>
+        </select>
       </div>
 
-      <div class="flex items-end">
-        <button id="btnHitung" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded transition cursor-pointer text-sm md:text-base">
+      <div>
+        <label class="block text-xs md:text-sm text-gray-400 mb-1">Jumlah Hari Beruntun</label>
+        <input type="number" id="jumlahHari" value="5" min="1" max="10" placeholder="Maksimal 10" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+      </div>
+
+      <div class="flex items-end sm:col-span-2 md:col-span-1">
+        <button id="btnHitung" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-lg transition cursor-pointer text-sm shadow-md">
           Hitung Batas Harga
         </button>
       </div>
@@ -25,9 +33,9 @@
       <table class="w-full text-left border-collapse table-fixed min-w-[280px]">
         <thead class="sticky top-0 z-10">
           <tr class="border-b border-gray-800 bg-[#12192C]">
-            <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider text-center w-1/3">HARI</th>
-            <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-emerald-400 uppercase tracking-wider text-center w-1/3">ARA</th>
-            <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-rose-500 uppercase tracking-wider text-center w-1/3">ARB</th>
+            <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider text-center w-1/4">HARI</th>
+            <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider text-center w-1/4">PERSENTASE</th>
+            <th id="thTarget" class="p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-emerald-400">PROYEKSI HARGA</th>
           </tr>
         </thead>
         <tbody id="tabelBody">
@@ -43,14 +51,17 @@
   if (btnHitung) {
     btnHitung.addEventListener('click', () => {
       const hargaInput = document.getElementById('hargaSebut') as HTMLInputElement;
+      const tipeSelect = document.getElementById('tipeBatas') as HTMLSelectElement;
       const hariInput = document.getElementById('jumlahHari') as HTMLInputElement;
       const tabelContainer = document.getElementById('tabelHasilContainer');
       const tabelBody = document.getElementById('tabelBody');
+      const thTarget = document.getElementById('thTarget');
 
-      let hargaAwal = parseFloat(hargaInput.value);
+      let hargaBerjalan = parseFloat(hargaInput.value);
+      let tipe = tipeSelect.value;
       let hari = parseInt(hariInput.value) || 1;
 
-      if (!hargaAwal || hargaAwal <= 0) {
+      if (!hargaBerjalan || hargaBerjalan <= 0) {
         alert('Masukkan harga saham yang valid!');
         return;
       }
@@ -59,32 +70,49 @@
       if (hari > 10) hari = 10;
       hariInput.value = hari.toString();
 
-      let hargaAra = hargaAwal;
-      let hargaArb = hargaAwal;
+      // Atur warna dan teks Header Tabel berdasarkan pilihan dropdown
+      if (thTarget) {
+        if (tipe === 'ARA') {
+          thTarget.innerText = 'PROYEKSI HARGA ARA';
+          thTarget.className = "p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-emerald-400";
+        } else {
+          thTarget.innerText = 'PROYEKSI HARGA ARB';
+          thTarget.className = "p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-rose-500";
+        }
+      }
 
+      if (tabelBody) tabelBody.innerHTML = '';
+
+      // Fungsi penentu persentase regulasi bursa BEI
       const dapatkanPersentase = (price: number) => {
         if (price <= 200) return 0.35;
         if (price <= 5000) return 0.25;
         return 0.20;
       };
 
-      if (tabelBody) tabelBody.innerHTML = '';
-
       for (let i = 1; i <= hari; i++) {
-        let pctAra = dapatkanPersentase(hargaAra);
-        let pctArb = dapatkanPersentase(hargaArb);
+        let pct = dapatkanPersentase(hargaBerjalan);
+        let infoPersen = `+${(pct * 100)}%`;
+        let warnaTeks = "text-emerald-400";
 
-        hargaAra = Math.floor(hargaAra * (1 + pctAra));
-        hargaArb = Math.floor(hargaArb * (1 - pctArb));
-        if (hargaArb < 50) hargaArb = 50;
+        if (tipe === 'ARA') {
+          hargaBerjalan = Math.floor(hargaBerjalan * (1 + pct));
+          warnaTeks = "text-emerald-400";
+          infoPersen = `+${(pct * 100)}%`;
+        } else {
+          hargaBerjalan = Math.floor(hargaBerjalan * (1 - pct));
+          if (hargaBerjalan < 50) hargaBerjalan = 50;
+          warnaTeks = "text-rose-400";
+          infoPersen = `-${(pct * 100)}%`;
+        }
 
         const row = document.createElement('tr');
         row.className = "border-b border-gray-800/60 hover:bg-[#12192C] transition font-bold text-xs md:text-sm text-center";
         
         row.innerHTML = `
-          <td class="p-3 md:p-4 text-gray-400">H+${i}</td>
-          <td class="p-3 md:p-4 text-emerald-400 whitespace-nowrap">Rp ${hargaAra.toLocaleString('id-ID')}</td>
-          <td class="p-3 md:p-4 text-rose-400 whitespace-nowrap">Rp ${hargaArb.toLocaleString('id-ID')}</td>
+          <td class="p-3 md:p-4 text-gray-400">Hari ke-${i}</td>
+          <td class="p-3 md:p-4 text-gray-300 font-semibold">${infoPersen}</td>
+          <td class="p-3 md:p-4 ${warnaTeks} whitespace-nowrap">Rp ${hargaBerjalan.toLocaleString('id-ID')}</td>
         `;
         
         tabelBody?.appendChild(row);
