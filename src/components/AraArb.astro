@@ -35,7 +35,7 @@
           <tr class="border-b border-gray-800 bg-[#12192C]">
             <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider text-center w-1/4">HARI</th>
             <th class="p-3 md:p-4 text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider text-center w-1/4">PERSENTASE</th>
-            <th id="thTarget" class="p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-emerald-400">PROYEKSI HARGA</th>
+            <th id="thTarget" class="p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-emerald-400">HARGA</th>
           </tr>
         </thead>
         <tbody id="tabelBody">
@@ -70,41 +70,59 @@
       if (hari > 10) hari = 10;
       hariInput.value = hari.toString();
 
-      // Atur warna dan teks Header Tabel berdasarkan pilihan dropdown
       if (thTarget) {
         if (tipe === 'ARA') {
-          thTarget.innerText = 'PROYEKSI HARGA ARA';
+          thTarget.innerText = 'HARGA ARA';
           thTarget.className = "p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-emerald-400";
         } else {
-          thTarget.innerText = 'PROYEKSI HARGA ARB';
+          thTarget.innerText = 'HARGA ARB';
           thTarget.className = "p-3 md:p-4 text-xs md:text-sm font-bold uppercase tracking-wider text-center w-2/4 text-rose-500";
         }
       }
 
       if (tabelBody) tabelBody.innerHTML = '';
 
-      // Fungsi penentu persentase regulasi bursa BEI
+      // Fungsi regulasi persentase batas BEI
       const dapatkanPersentase = (price: number) => {
         if (price <= 200) return 0.35;
         if (price <= 5000) return 0.25;
         return 0.20;
       };
 
+      // Fungsi penentu fraksi harga saham BEI secara real-time berdasarkan harga teoritisnya
+      const dapatkanFraksi = (price: number) => {
+        if (price < 200) return 1;
+        if (price < 500) return 2;
+        if (price < 2000) return 5;
+        if (price < 5000) return 10;
+        return 25;
+      };
+
       for (let i = 1; i <= hari; i++) {
+        let hargaSebelumnya = hargaBerjalan;
         let pct = dapatkanPersentase(hargaBerjalan);
-        let infoPersen = `+${(pct * 100)}%`;
         let warnaTeks = "text-emerald-400";
 
         if (tipe === 'ARA') {
-          hargaBerjalan = Math.floor(hargaBerjalan * (1 + pct));
+          let hargaTeoritis = hargaBerjalan * (1 + pct);
+          let fraksi = dapatkanFraksi(hargaTeoritis);
+          // ARA dibulatkan ke bawah ke fraksi terdekat
+          hargaBerjalan = Math.floor(hargaTeoritis / fraksi) * fraksi;
           warnaTeks = "text-emerald-400";
-          infoPersen = `+${(pct * 100)}%`;
         } else {
-          hargaBerjalan = Math.floor(hargaBerjalan * (1 - pct));
+          let hargaTeoritis = hargaBerjalan * (1 - pct);
+          let fraksi = dapatkanFraksi(hargaTeoritis);
+          // ARB dibulatkan ke atas ke fraksi terdekat agar tidak melanggar batas max penurunan
+          hargaBerjalan = Math.ceil(hargaTeoritis / fraksi) * fraksi;
           if (hargaBerjalan < 50) hargaBerjalan = 50;
           warnaTeks = "text-rose-400";
-          infoPersen = `-${(pct * 100)}%`;
         }
+
+        // Hitung persentase perubahan riil dari harga penutupan sebelumnya
+        let perubahanRiil = ((hargaBerjalan - hargaSebelumnya) / hargaSebelumnya) * 100;
+        
+        // Memformat tampilan angka desimal agar rapi (maksimal 2 angka di belakang koma)
+        let infoPersen = (perubahanRiil > 0 ? "+" : "") + perubahanRiil.toFixed(2) + "%";
 
         const row = document.createElement('tr');
         row.className = "border-b border-gray-800/60 hover:bg-[#12192C] transition font-bold text-xs md:text-sm text-center";
