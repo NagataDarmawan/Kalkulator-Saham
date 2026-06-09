@@ -160,7 +160,7 @@
     const isMarketOpen = (hari >= 1 && hari <= 5) && (waktuSekarangMenit >= bursaBukaMenit && waktuSekarangMenit < bursaTutupMenit);
 
     if (isMarketOpen) {
-      badge.innerText = "Live Mode (Open)";
+      badge.innerText = "Market Opened";
       badge.className = "text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium transition-colors duration-300";
     } else {
       badge.innerText = "Market Closed";

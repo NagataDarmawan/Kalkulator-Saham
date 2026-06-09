@@ -1,0 +1,160 @@
+---
+// Components: GajiDividen.astro
+---
+
+<div class="max-w-2xl mx-auto p-4 md:p-6 bg-[#0E1424] border border-gray-800 rounded-xl flex flex-col gap-4">
+  <h2 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Kalkulator Gaji Dividen</h2>
+  <p class="text-xs md:text-sm text-gray-400 -mt-2">Rencanakan kebebasan finansial Anda dengan menghitung kebutuhan modal berdasarkan target pasif inkam bulanan.</p>
+
+  <div class="grid grid-cols-1 gap-4 pb-2">
+    <div>
+      <label class="block text-xs md:text-sm text-gray-400 mb-1">Target Gaji Bulanan Anda (Rp)</label>
+      <input type="text" id="targetBulanan" placeholder="Contoh: 5.000.000" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs md:text-sm text-gray-400 mb-1">Dividen Per Lembar (Rp)</label>
+        <input type="text" id="dps" placeholder="Contoh: 200" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+      </div>
+      <div>
+        <label class="block text-xs md:text-sm text-gray-400 mb-1">Harga Saham Saat Ini (Rp)</label>
+        <input type="text" id="hargaSaham" placeholder="Contoh: 3.800" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+      </div>
+    </div>
+    <div class="mt-2">
+      <button onclick="prosesHitungDividen()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-lg transition cursor-pointer text-sm shadow-md">
+        Hitung Kebutuhan Modal
+      </button>
+    </div>
+  </div>
+
+  <div id="hasilDividenArea" class="hidden space-y-4 p-5 bg-[#0B101D] rounded-xl border border-gray-800">
+    <h3 class="font-bold text-gray-400 border-b border-gray-800 pb-2 text-sm uppercase tracking-wider">Hasil Kalkulasi Target Finansial:</h3>
+    
+    <div class="space-y-4">
+      <div>
+        <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Jumlah Saham Wajib Dimiliki</p>
+        <p class="text-sm md:text-base text-white mt-0.5" id="outputLot"></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Modal yang Diperlukan</p>
+        <p class="text-sm md:text-base text-white mt-0.5" id="outputModal"></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Dividend Yield Bersih</p>
+        <p class="text-sm md:text-base text-white mt-0.5" id="outputYield"></p>
+      </div>
+    </div>
+
+    <div class="mt-4 pt-3 border-t border-gray-800 text-xs text-amber-400/90 leading-relaxed bg-[#151C2F] p-3 rounded-lg border border-amber-900/40">
+      💡 <strong>Keterangan Pajak:</strong> Jika dividen di-reinvestasikan kembali dalam jangka waktu &lt; 3 tahun maka bebas pajak (0%), namun jika ditarik dan digunakan untuk keperluan di luar investasi akan dikenakan Pajak Penghasilan (PPh) sebesar 10%.
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  // Fungsi utama untuk memformat string angka menjadi format ribuan (titik)
+  function formatRupiah(angka) {
+    const numberString = angka.replace(/[^,\d]/g, '').toString();
+    const split = numberString.split(',');
+    const sisa = split[0].length % 3;
+    let rupiah = split[0].substr(0, sisa);
+    const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    if (ribuan) {
+      const separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+
+    rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+    return rupiah;
+  }
+
+  // Fungsi helper untuk membersihkan titik agar bisa dihitung secara matematis
+  function hilangkanTitik(value) {
+    return parseFloat(value.replace(/\./g, '')) || 0;
+  }
+
+  // Menerapkan event listener auto-format pada saat user mengetik
+  const setupAutoFormat = () => {
+    const inputs = ['targetBulanan', 'dps', 'hargaSaham'];
+    inputs.forEach(id => {
+      const inputEl = document.getElementById(id);
+      if (inputEl) {
+        inputEl.addEventListener('input', (e) => {
+          const target = e.target;
+          target.value = formatRupiah(target.value);
+        });
+      }
+    });
+  };
+
+  // Jalankan fungsi auto-format
+  setupAutoFormat();
+  document.addEventListener('astro:page-load', setupAutoFormat);
+
+  // Fungsi kalkulasi ketika tombol ditekan
+  function prosesHitungDividen() {
+    const targetInput = document.getElementById('targetBulanan');
+    const dpsInput = document.getElementById('dps');
+    const hargaInput = document.getElementById('hargaSaham');
+
+    if (targetInput && dpsInput && hargaInput) {
+      // Ambil nilai lalu bersihkan karakter titik sebelum dikalkulasi
+      const targetBulanan = hilangkanTitik(targetInput.value);
+      const dpsAwal = hilangkanTitik(dpsInput.value);
+      const hargaSaham = hilangkanTitik(hargaInput.value);
+      
+      if (targetBulanan <= 0 || dpsAwal <= 0 || hargaSaham <= 0) {
+        alert('Mohon isi semua data input terlebih dahulu dengan benar.');
+        return;
+      }
+
+      const targetTahunan = targetBulanan * 12;
+
+      // Skenario A: Di-reinvest (Bebas Pajak)
+      const dpsReinvest = dpsAwal;
+      const lotReinvest = Math.ceil((targetTahunan / dpsReinvest) / 100);
+      const modalReinvest = lotReinvest * 100 * hargaSaham;
+      const yieldReinvest = (dpsReinvest / hargaSaham) * 100;
+
+      // Skenario B: Tidak Di-reinvest (Potong Pajak 10%)
+      const dpsDitarik = dpsAwal * 0.9;
+      const lotDitarik = Math.ceil((targetTahunan / dpsDitarik) / 100);
+      const modalDitarik = lotDitarik * 100 * hargaSaham;
+      const yieldDitarik = (dpsDitarik / hargaSaham) * 100;
+
+      // Munculkan kontainer output
+      const hasilArea = document.getElementById('hasilDividenArea');
+      if (hasilArea) {
+        hasilArea.classList.remove('hidden');
+      }
+
+      // Render hasil output ke elemen DOM masing-masing
+      const elLot = document.getElementById('outputLot');
+      const elModal = document.getElementById('outputModal');
+      const elYield = document.getElementById('outputYield');
+
+      if (elLot) {
+        elLot.innerHTML = `
+          <span class="text-emerald-400 font-bold">${lotReinvest.toLocaleString('id-ID')} Lot</span> <span class="text-gray-400 text-xs">(Jika Di-reinvest)</span> / 
+          <span class="text-emerald-400 font-bold">${lotDitarik.toLocaleString('id-ID')} Lot</span> <span class="text-gray-400 text-xs">(Jika Tidak Di-reinvest)</span>
+        `;
+      }
+
+      if (elModal) {
+        elModal.innerHTML = `
+          <span class="text-white font-bold">Rp ${modalReinvest.toLocaleString('id-ID')}</span> <span class="text-gray-400 text-xs">(Jika Di-reinvest)</span> / 
+          <span class="text-white font-bold">Rp ${modalDitarik.toLocaleString('id-ID')}</span> <span class="text-gray-400 text-xs">(Jika Tidak Di-reinvest)</span>
+        `;
+      }
+
+      if (elYield) {
+        elYield.innerHTML = `
+          <span class="text-white font-bold">${yieldReinvest.toFixed(2)}%</span> <span class="text-gray-400 text-xs">(Jika Di-reinvest)</span> / 
+          <span class="text-white font-bold">${yieldDitarik.toFixed(2)}%</span> <span class="text-gray-400 text-xs">(Jika Tidak Di-reinvest)</span>
+        `;
+      }
+    }
+  }
+</script>

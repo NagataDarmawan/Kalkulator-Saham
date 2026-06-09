@@ -5,6 +5,8 @@ import AverageDown from '../components/AverageDown.astro';
 import RiskManagement from '../components/RiskManagement.astro';
 import NetProfit from '../components/NetProfit.astro';
 import EstimasiDividen from '../components/EstimasiDividen.astro';
+import GajiDividen from '../components/GajiDividen.astro';
+import SahamNyangkut from '../components/SahamNyangkut.astro';
 
 // Impor komponen pasar global baru yang akan dibuat nanti (pisahkan per file masing-masing)
 //import IndexDunia from '../components/tickers/IndexDunia.astro';
@@ -50,7 +52,7 @@ import '../styles/global.css';
             Reset (Batal)
           </button>
           <button id="btnSimpanFee" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 rounded-lg transition cursor-pointer text-center shadow-md">
-            Simpan Permanen
+            Simpan
           </button>
         </div>
       </div>
@@ -71,6 +73,12 @@ import '../styles/global.css';
         <button data-tab="dividen" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Estimasi Dividen
         </button>
+        <button data-tab="gaji-dividen" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          Gaji Dividen
+        </button>
+        <button data-tab="saham-nyangkut" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          Saham Nyangkut
+        </button>
       </div>
 
       <div id="tab-contents" class="w-full pt-4">
@@ -88,6 +96,12 @@ import '../styles/global.css';
         </div>
         <div id="content-dividen" class="tab-content hidden w-full">
           <EstimasiDividen />
+        </div>
+        <div id="content-gaji-dividen" class="tab-content hidden w-full">
+          <GajiDividen />
+        </div>
+        <div id="content-saham-nyangkut" class="tab-content hidden w-full">
+          <SahamNyangkut />
         </div>
       </div>
     </div>
