@@ -150,34 +150,6 @@ import '../styles/global.css';
 </Layout>
 
 <script>
-  // --- REALTIME BURSA STATUS ---
-  function updateMarketStatus() {
-    const badge = document.getElementById('liveModeBadge');
-    if (!badge) return;
-
-    const options = { timeZone: 'Asia/Jakarta', hour12: false };
-    const wibDateStr = new Date().toLocaleString('en-US', options);
-    const wibDate = new Date(wibDateStr);
-
-    const hari = wibDate.getDay(); 
-    const jam = wibDate.getHours();
-    const menit = wibDate.getMinutes();
-
-    const waktuSekarangMenit = (jam * 60) + menit;
-    const bursaBukaMenit = 9 * 60;       
-    const bursaTutupMenit = 16 * 60;     
-
-    const isMarketOpen = (hari >= 1 && hari <= 5) && (waktuSekarangMenit >= bursaBukaMenit && waktuSekarangMenit < bursaTutupMenit);
-
-    if (isMarketOpen) {
-      badge.innerText = "Market Opened";
-      badge.className = "text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium";
-    } else {
-      badge.innerText = "Market Closed";
-      badge.className = "text-xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-full font-medium";
-    }
-  }
-
   // --- CONTROL UTAMA PANEL SWITCHER (KALKULATOR VS GLOBAL) ---
   function initMainSwitcher() {
     const mainTabCalc = document.getElementById('mainTabCalc');
@@ -269,7 +241,6 @@ import '../styles/global.css';
   const btnBatal = document.getElementById('btnBatalFee');
 
   window.addEventListener('DOMContentLoaded', () => {
-    updateMarketStatus();
     initMainSwitcher();
     initSubTabsKalkulator();
     initSubTabsReksadana();
@@ -277,9 +248,7 @@ import '../styles/global.css';
     const savedFeeBeli = localStorage.getItem('customFeeBeli');
     const savedFeeJual = localStorage.getItem('customFeeJual');
     if (savedFeeBeli) inputFeeBeli.value = savedFeeBeli;
-    if (savedFeeJual) inputFeeJual.value = savedFeeJual;
-
-    setInterval(updateMarketStatus, 60000);
+    if (savedFeeJual) inputFeeJual.value = savedFeeJual;;
   });
 
   btnSimpan?.addEventListener('click', () => {
