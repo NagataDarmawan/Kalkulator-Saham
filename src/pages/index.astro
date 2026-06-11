@@ -6,7 +6,7 @@ import RiskManagement from '../components/RiskManagement.astro';
 import NetProfit from '../components/NetProfit.astro';
 import EstimasiDividen from '../components/EstimasiDividen.astro';
 import GajiDividen from '../components/GajiDividen.astro';
-import SahamNyangkut from '../components/SahamNyangkut.astro';
+import HargaWajar from '../components/HargaWajar.astro';
 
 // Impor komponen pasar global baru yang akan dibuat nanti (pisahkan per file masing-masing)
 //import IndexDunia from '../components/tickers/IndexDunia.astro';
@@ -28,7 +28,7 @@ import '../styles/global.css';
           Kalkulator Saham
         </button>
         <button id="mainTabInfoPasar" class="whitespace-nowrap text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg text-gray-400 hover:text-emerald-400 transition cursor-pointer">
-          Info Pasar
+          Reksadana
         </button>
       </div>
     </div>
@@ -76,8 +76,8 @@ import '../styles/global.css';
         <button data-tab="gaji-dividen" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Gaji Dividen
         </button>
-        <button data-tab="saham-nyangkut" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
-          Saham Nyangkut
+        <button data-tab="harga-wajar" class="tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          Harga Wajar
         </button>
       </div>
 
@@ -100,8 +100,8 @@ import '../styles/global.css';
         <div id="content-gaji-dividen" class="tab-content hidden w-full">
           <GajiDividen />
         </div>
-        <div id="content-saham-nyangkut" class="tab-content hidden w-full">
-          <SahamNyangkut />
+        <div id="content-harga-wajar" class="tab-content hidden w-full">
+          <HargaWajar />
         </div>
       </div>
     </div>
@@ -109,38 +109,38 @@ import '../styles/global.css';
     <div id="bodyInfoPasar" class="w-full hidden px-4 md:px-8">
       
       <div class="w-full grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pb-4 border-b border-gray-800 pt-4">
-        <button data-global-tab="market-caps" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center order-first col-span-2 sm:order-none sm:col-span-1">
+        <button data-kalkulator-tab="market-caps" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center order-first col-span-2 sm:order-none sm:col-span-1">
           Top Market Caps BEI
         </button>
         
-        <button data-global-tab="index-dunia" class="global-tab-btn bg-emerald-600 text-white px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+        <button data-kalkulator-tab="index-dunia" class="reksadana-tab-btn bg-emerald-600 text-white px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Index Dunia
         </button>
-        <button data-global-tab="commodities" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+        <button data-kalkulator-tab="commodities" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Commodities
         </button>
-        <button data-global-tab="kurs" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+        <button data-kalkulator-tab="kurs" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Kurs
         </button>
-        <button data-global-tab="dividen-bei" class="global-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+        <button data-kalkulator-tab="dividen-bei" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
           Saham Dividen BEI
         </button>
       </div>
 
-      <div id="global-contents" class="w-full pt-4">
-        <div id="global-index-dunia" class="global-content block w-full">
+      <div id="reksadana-contents" class="w-full pt-4">
+        <div id="reksadana-index-dunia" class="reksadana-content block w-full">
           {/* <IndexDunia /> */}
         </div>
-        <div id="global-commodities" class="global-content hidden w-full">
+        <div id="reksadana-commodities" class="reksadana-content hidden w-full">
           {/* <Commodities /> */}
         </div>
-        <div id="global-kurs" class="global-content hidden w-full">
+        <div id="reksadana-kurs" class="reksadana-content hidden w-full">
           {/* <KursRupiah /> */}
         </div>
-        <div id="global-dividen-bei" class="global-content hidden w-full">
+        <div id="reksadana-dividen-bei" class="reksadana-content hidden w-full">
           {/* <SahamDividen /> */}
         </div>
-        <div id="global-market-caps" class="global-content hidden w-full">
+        <div id="reksadana-market-caps" class="reksadana-content hidden w-full">
           {/* <TopMarketCaps /> */}
         </div>
       </div>
@@ -235,15 +235,15 @@ import '../styles/global.css';
   }
 
   // --- LOGIKA UTAMA SUB-TAB INTERNAL GLOBAL ---
-  function initSubTabsGlobal() {
-    const globalTabs = document.querySelectorAll('.global-tab-btn');
-    const globalContents = document.querySelectorAll('.global-content');
+  function initSubTabsReksadana() {
+    const reksadanaTabs = document.querySelectorAll('.reksadana-tab-btn');
+    const reksadanaContents = document.querySelectorAll('.reksadana-content');
 
-    globalTabs.forEach(tab => {
+    reksadanaTabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        const targetGlobalTab = tab.getAttribute('data-global-tab');
+        const targetReksadanaTab = tab.getAttribute('data-reksadana-tab');
 
-        globalTabs.forEach(t => {
+        reksadanaTabs.forEach(t => {
           t.classList.remove('bg-emerald-600', 'text-white');
           t.classList.add('bg-[#0E1424]', 'text-gray-400');
         });
@@ -251,8 +251,8 @@ import '../styles/global.css';
         tab.classList.remove('bg-[#0E1424]', 'text-gray-400');
         tab.classList.add('bg-emerald-600', 'text-white');
 
-        globalContents.forEach(content => {
-          if (content.id === `global-${targetGlobalTab}`) {
+        reksadanaContents.forEach(content => {
+          if (content.id === `reksadana-${targetReksadanaTab}`) {
             content.classList.replace('hidden', 'block');
           } else {
             content.classList.replace('block', 'hidden');
@@ -272,7 +272,7 @@ import '../styles/global.css';
     updateMarketStatus();
     initMainSwitcher();
     initSubTabsKalkulator();
-    initSubTabsGlobal();
+    initSubTabsReksadana();
 
     const savedFeeBeli = localStorage.getItem('customFeeBeli');
     const savedFeeJual = localStorage.getItem('customFeeJual');
