@@ -2,6 +2,11 @@
   <div class="w-full bg-[#0E1424] border border-gray-800 p-4 md:p-6 rounded-xl flex flex-col gap-4">
     <h3 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Kalkulator Average</h3>
     
+    <div class="bg-[#151C2F] border-l-4 border-emerald-500 p-3 rounded-r-lg border border-gray-800 text-xs text-gray-300 flex flex-col gap-1">
+      <p>📉 <span class="text-emerald-400 font-bold">Average Down / Up:</span> Strategi menghitung kembali harga rata-rata kepemilikan saham setelah Anda melakukan pembelian tambahan pada harga yang berbeda (lebih rendah atau lebih tinggi).</p>
+      <p class="text-gray-400 mt-1 italic text-[11px] border-t border-gray-800 pt-1">Sistem ini otomatis mengakumulasikan total lot gabungan serta menyinkronkan beban Fee Beli Sekuritas terbaru pada nominal transaksi baru Anda secara presisi.</p>
+    </div>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-[#12192C] p-4 rounded-lg border border-gray-800 flex flex-col gap-3">
         <span class="text-xs font-bold text-gray-300 uppercase tracking-wide">Kepemilikan Saat Ini (Lama)</span>
@@ -28,7 +33,7 @@
       </div>
     </div>
 
-    <button id="btnHitungAvg" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition cursor-pointer text-sm font-semibold shadow-md">
+    <button id="btnHitungAvg" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition cursor-pointer text-sm shadow-md">
       Hitung Rata-Rata Baru
     </button>
 

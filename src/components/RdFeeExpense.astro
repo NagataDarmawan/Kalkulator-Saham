@@ -1,0 +1,87 @@
+---
+// Components: reksadana/RdFeeExpense.astro
+---
+<div class="max-w-2xl mx-auto p-4 md:p-6 bg-[#0E1424] border border-gray-800 rounded-xl flex flex-col gap-4">
+  <h2 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Analisis Potongan Biaya Transaksi & Expense Ratio</h2>
+  
+  <div class="bg-[#151C2F] border-l-4 border-emerald-500 p-3 rounded-r-lg border border-gray-800 text-xs text-gray-300">
+    Menghitung seberapa besar dampak beban biaya operasional tahunan internal (Expense Ratio) serta potongan langsung fee beli/jual (Subscription/Redemption fee) terhadap total kas Anda.
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Modal / Nilai Dana (Rp)</label>
+      <input type="text" id="feeUang" placeholder="Contoh: 5.000.000" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Fee Transaksi Beli/Jual (%)</label>
+      <input type="number" id="feePersen" step="0.01" placeholder="Contoh: 1" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Expense Ratio Produk (%)</label>
+      <input type="number" id="feeExpense" step="0.01" placeholder="Contoh: 1.5" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+  </div>
+
+  <button onclick="hitungFeeExpense()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition cursor-pointer shadow-md">
+    Analisis Efisiensi Biaya
+  </button>
+
+  <div id="hasilFeeArea" class="hidden space-y-3 p-5 bg-[#0B101D] rounded-xl border border-gray-800">
+    <p class="text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Total Estimasi Beban Biaya:</p>
+    <div class="text-3xl font-extrabold text-rose-500" id="outFeeTotal">Rp 0</div>
+    <div id="badgeFee" class="inline-block px-2.5 py-1 rounded-md text-xs font-bold mt-1 bg-emerald-950/50 text-emerald-400 border border-emerald-900"></div>
+    <p class="text-xs md:text-sm text-gray-400 mt-2 border-t pt-3 border-gray-800 leading-relaxed" id="descFee"></p>
+  </div>
+</div>
+
+<script is:inline>
+  function fmtRpFee(str) {
+    const numStr = str.replace(/[^,\d]/g, '').toString();
+    const split = numStr.split(',');
+    const sisa = split[0].length % 3;
+    let rp = split[0].substr(0, sisa);
+    const rb = split[0].substr(sisa).match(/\d{3}/gi);
+    if (rb) { rp += (sisa ? '.' : '') + rb.join('.'); }
+    return split[1] !== undefined ? rp + ',' + split[1] : rp;
+  }
+
+  const setupFeeFormat = () => {
+    const el = document.getElementById('feeUang');
+    if (el) el.addEventListener('input', (e) => { e.target.value = fmtRpFee(e.target.value); });
+  };
+  setupFeeFormat();
+  document.addEventListener('astro:page-load', setupFeeFormat);
+
+  function hitungFeeExpense() {
+    const uang = parseFloat(document.getElementById('feeUang').value.replace(/\./g, '').replace(/,/g, '.')) || 0;
+    const fPersen = parseFloat(document.getElementById('feePersen').value) || 0;
+    const expPersen = parseFloat(document.getElementById('feeExpense').value) || 0;
+
+    if (uang <= 0) {
+      alert('Masukkan nilai dana awal investasi.'); return;
+    }
+
+    const nominalFee = uang * (fPersen / 100);
+    const nominalExpense = uang * (expPersen / 100);
+    const sisaDana = uang - nominalFee;
+
+    document.getElementById('hasilFeeArea').classList.remove('hidden');
+    document.getElementById('outFeeTotal').innerText = `Rp ${Math.round(nominalFee + nominalExpense).toLocaleString('id-ID')}`;
+    document.getElementById('badgeFee').innerText = `Alokasi Kas Bersih Terinvestasi: Rp ${Math.round(sisaDana).toLocaleString('id-ID')}`;
+    document.getElementById('descFee').innerHTML = `Potongan fee transaksi memotong langsung uang Anda sebesar <span class="text-rose-400 font-bold">Rp ${Math.round(nominalFee).toLocaleString('id-ID')}</span>. Sedangkan internal manajer investasi mengambil alokasi operasional tahunan sekitar <span class="text-gray-400 italic">Rp ${Math.round(nominalExpense).toLocaleString('id-ID')}</span>.`;
+  }
+</script>
+
+<style>
+  /* Menghilangkan tombol spinner up dan down pada input number */
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .no-spinner {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+</style>

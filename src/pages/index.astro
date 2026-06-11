@@ -8,12 +8,12 @@ import EstimasiDividen from '../components/EstimasiDividen.astro';
 import GajiDividen from '../components/GajiDividen.astro';
 import HargaWajar from '../components/HargaWajar.astro';
 
-// Impor komponen pasar global baru yang akan dibuat nanti (pisahkan per file masing-masing)
-//import IndexDunia from '../components/tickers/IndexDunia.astro';
-//import Commodities from '../components/tickers/Commodities.astro';
-//import KursRupiah from '../components/tickers/KursRupiah.astro';
-//import SahamDividen from '../components/tickers/SahamDividen.astro';
-//import TopMarketCaps from '../components/tickers/TopMarketCaps.astro';
+// Impor 3 komponen kalkulator reksadana baru per file .astro
+import RdDca from '../components/RdDca.astro';
+import RdCagr from '../components/RdCagr.astro';
+import RdFeeExpense from '../components/RdFeeExpense.astro';
+import RdGoalPlanner from '../components/RdGoalPlanner.astro';
+import RdRealReturn from '../components/RdRealReturn.astro';
 
 // Pastikan path ini sesuai dengan tempat Anda menyimpan file CSS utama Tailwind v4 Anda
 import '../styles/global.css'; 
@@ -28,7 +28,7 @@ import '../styles/global.css';
           Kalkulator Saham
         </button>
         <button id="mainTabInfoPasar" class="whitespace-nowrap text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg text-gray-400 hover:text-emerald-400 transition cursor-pointer">
-          Reksadana
+          Kalkulator Reksadana
         </button>
       </div>
     </div>
@@ -106,42 +106,41 @@ import '../styles/global.css';
       </div>
     </div>
 
-    <div id="bodyInfoPasar" class="w-full hidden px-4 md:px-8">
+    <div id="bodyInfoPasar" class="w-full hidden px-1 md:px-1">
       
       <div class="w-full grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pb-4 border-b border-gray-800 pt-4">
-        <button data-kalkulator-tab="market-caps" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center order-first col-span-2 sm:order-none sm:col-span-1">
-          Top Market Caps BEI
+        <button data-reksadana-tab="rd-dca" class="reksadana-tab-btn bg-emerald-600 text-white px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center col-span-2 sm:col-span-1">
+          DCA (Rutin)
         </button>
-        
-        <button data-kalkulator-tab="index-dunia" class="reksadana-tab-btn bg-emerald-600 text-white px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
-          Index Dunia
+        <button data-reksadana-tab="rd-cagr" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          CAGR / Return
         </button>
-        <button data-kalkulator-tab="commodities" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
-          Commodities
+        <button data-reksadana-tab="rd-fee" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          Biaya & Rasio
         </button>
-        <button data-kalkulator-tab="kurs" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
-          Kurs
+        <button data-reksadana-tab="rd-goal" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          Goal Planner
         </button>
-        <button data-kalkulator-tab="dividen-bei" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
-          Saham Dividen BEI
+        <button data-reksadana-tab="rd-real-return" class="reksadana-tab-btn bg-[#0E1424] hover:bg-[#151C2F] text-gray-400 px-3 py-2.5 rounded-lg font-medium text-xs md:text-sm transition cursor-pointer text-center">
+          Real Return
         </button>
       </div>
 
       <div id="reksadana-contents" class="w-full pt-4">
-        <div id="reksadana-index-dunia" class="reksadana-content block w-full">
-          {/* <IndexDunia /> */}
+        <div id="reksadana-rd-dca" class="reksadana-content block w-full">
+          <RdDca />
         </div>
-        <div id="reksadana-commodities" class="reksadana-content hidden w-full">
-          {/* <Commodities /> */}
+        <div id="reksadana-rd-cagr" class="reksadana-content hidden w-full">
+          <RdCagr />
         </div>
-        <div id="reksadana-kurs" class="reksadana-content hidden w-full">
-          {/* <KursRupiah /> */}
+        <div id="reksadana-rd-fee" class="reksadana-content hidden w-full">
+          <RdFeeExpense />
         </div>
-        <div id="reksadana-dividen-bei" class="reksadana-content hidden w-full">
-          {/* <SahamDividen /> */}
+        <div id="reksadana-rd-goal" class="reksadana-content hidden w-full">
+          <RdGoalPlanner />
         </div>
-        <div id="reksadana-market-caps" class="reksadana-content hidden w-full">
-          {/* <TopMarketCaps /> */}
+        <div id="reksadana-rd-real-return" class="reksadana-content hidden w-full">
+          <RdRealReturn />
         </div>
       </div>
     </div>
@@ -150,7 +149,7 @@ import '../styles/global.css';
 </Layout>
 
 <script>
-  // --- CONTROL UTAMA PANEL SWITCHER (KALKULATOR VS GLOBAL) ---
+  // --- CONTROL UTAMA PANEL SWITCHER (SAHAM VS REKSADANA) ---
   function initMainSwitcher() {
     const mainTabCalc = document.getElementById('mainTabCalc');
     const mainTabInfoPasar = document.getElementById('mainTabInfoPasar');
@@ -178,7 +177,7 @@ import '../styles/global.css';
     });
   }
 
-  // --- LOGIKA UTAMA SUB-TAB INTERNAL KALKULATOR ---
+  // --- LOGIKA SUB-TAB INTERNAL KALKULATOR SAHAM ---
   function initSubTabsKalkulator() {
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
@@ -206,7 +205,7 @@ import '../styles/global.css';
     });
   }
 
-  // --- LOGIKA UTAMA SUB-TAB INTERNAL GLOBAL ---
+  // --- LOGIKA SUB-TAB INTERNAL REKSADANA ---
   function initSubTabsReksadana() {
     const reksadanaTabs = document.querySelectorAll('.reksadana-tab-btn');
     const reksadanaContents = document.querySelectorAll('.reksadana-content');
@@ -234,7 +233,7 @@ import '../styles/global.css';
     });
   }
 
-  // --- MANAJEMEN DATA FEE SEKURITAS LOCALSTORAGE ---
+  // --- LOCALSTORAGE MANAGEMENT (FEE SAHAM) ---
   const inputFeeBeli = document.getElementById('feeBeli') as HTMLInputElement;
   const inputFeeJual = document.getElementById('feeJual') as HTMLInputElement;
   const btnSimpan = document.getElementById('btnSimpanFee');
@@ -248,7 +247,7 @@ import '../styles/global.css';
     const savedFeeBeli = localStorage.getItem('customFeeBeli');
     const savedFeeJual = localStorage.getItem('customFeeJual');
     if (savedFeeBeli) inputFeeBeli.value = savedFeeBeli;
-    if (savedFeeJual) inputFeeJual.value = savedFeeJual;;
+    if (savedFeeJual) inputFeeJual.value = savedFeeJual;
   });
 
   btnSimpan?.addEventListener('click', () => {
@@ -258,7 +257,7 @@ import '../styles/global.css';
     }
     localStorage.setItem('customFeeBeli', inputFeeBeli.value);
     localStorage.setItem('customFeeJual', inputFeeJual.value);
-    alert('Fee sekuritas berhasil disimpan permanen! 👍');
+    alert('Fee sekuritas berhasil disimpan! 👍');
   });
 
   btnBatal?.addEventListener('click', () => {
@@ -266,7 +265,7 @@ import '../styles/global.css';
     inputFeeJual.value = "0.25";
     localStorage.removeItem('customFeeBeli');
     localStorage.removeItem('customFeeJual');
-    alert('Fee dikembalikan ke setelan default reguler (0.15% / 0.25%)');
+    alert('Fee dikembalikan ke default (0.15% / 0.25%)');
   });
 </script>
 

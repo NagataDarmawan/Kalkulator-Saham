@@ -1,0 +1,86 @@
+---
+// Components: reksadana/RdRealReturn.astro
+---
+<div class="max-w-2xl mx-auto p-4 md:p-6 bg-[#0E1424] border border-gray-800 rounded-xl flex flex-col gap-4">
+  <h2 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Kalkulator Keuntungan Bersih Riil (Inflasi Adjustment)</h2>
+  
+  <div class="bg-[#151C2F] border-l-4 border-emerald-500 p-3 rounded-r-lg border border-gray-800 text-xs text-gray-300">
+    Menghitung nilai riil dari hasil investasi Anda setelah dikurangi laju inflasi (Real Rate of Return) untuk melihat daya beli uang yang sebenarnya di masa depan.
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Estimasi Hasil Investasi (Rp)</label>
+      <input type="text" id="inflasiDana" placeholder="Contoh: 50.000... " class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Durasi Investasi (Tahun)</label>
+      <input type="number" id="inflasiTahun" placeholder="Contoh: 5" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Rata-rata Laju Inflasi (%/Thn)</label>
+      <input type="number" id="inflasiPersen" step="0.1" value="4.0" placeholder="Contoh: 4" class="no-spinner w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+  </div>
+
+  <button onclick="hitungRealReturn()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition cursor-pointer shadow-md">
+    Hitung Nilai Riil Uang
+  </button>
+
+  <div id="hasilInflasiArea" class="hidden space-y-3 p-5 bg-[#0B101D] rounded-xl border border-gray-800">
+    <p class="text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Setara Daya Beli Saat Ini:</p>
+    <div class="text-3xl font-extrabold text-emerald-500" id="outRealDana">Rp 0</div>
+    <div id="badgeInflasi" class="inline-block px-2.5 py-1 rounded-md text-xs font-bold mt-1 bg-amber-950/50 text-amber-500 border border-amber-500"></div>
+    <p class="text-xs md:text-sm text-gray-400 mt-2 border-t pt-3 border-gray-800 leading-relaxed" id="descReal"></p>
+  </div>
+</div>
+
+<script is:inline>
+  function fmtRpInflasi(str) {
+    const numStr = str.replace(/[^,\d]/g, '').toString();
+    const split = numStr.split(',');
+    const sisa = split[0].length % 3;
+    let rp = split[0].substr(0, sisa);
+    const rb = split[0].substr(sisa).match(/\d{3}/gi);
+    if (rb) { rp += (sisa ? '.' : '') + rb.join('.'); }
+    return split[1] !== undefined ? rp + ',' + split[1] : rp;
+  }
+
+  const setupInflasiFormat = () => {
+    const el = document.getElementById('inflasiDana');
+    if (el) el.addEventListener('input', (e) => { e.target.value = fmtRpInflasi(e.target.value); });
+  };
+  setupInflasiFormat();
+  document.addEventListener('astro:page-load', setupInflasiFormat);
+
+  function hitungRealReturn() {
+    const nominalNominal = parseFloat(document.getElementById('inflasiDana').value.replace(/\./g, '').replace(/,/g, '.')) || 0;
+    const t = parseFloat(document.getElementById('inflasiTahun').value);
+    const i = parseFloat(document.getElementById('inflasiPersen').value) / 100;
+
+    if (nominalNominal <= 0 || isNaN(t) || t <= 0 || isNaN(i) || i < 0) {
+      alert('Mohon isi seluruh field data dengan angka valid.'); return;
+    }
+
+    // Formula Present Value untuk deflasi nilai uang akibat inflasi: PV = FV / (1 + i)^t
+    const nilaiRiil = nominalNominal / Math.pow(1 + i, t);
+    const penurunanDayaBeli = nominalNominal - nilaiRiil;
+
+    document.getElementById('hasilInflasiArea').classList.remove('hidden');
+    document.getElementById('outRealDana').innerText = `Rp ${Math.round(nilaiRiil).toLocaleString('id-ID')}`;
+    document.getElementById('badgeInflasi').innerText = `Nilai Menyusut: -Rp ${Math.round(penurunanDayaBeli).toLocaleString('id-ID')}`;
+    document.getElementById('descReal').innerHTML = `Uang sebesar Rp ${nominalNominal.toLocaleString('id-ID')} pada ${t} tahun mendatang secara nominal memang besar, namun memiliki nilai daya beli yang setara dengan <span class="text-emerald-400 font-bold">Rp ${Math.round(nilaiRiil).toLocaleString('id-ID')}</span> pada hari ini akibat tergerus inflasi tahunan sebesar ${i * 100}%.`;
+  }
+</script>
+
+<style>
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .no-spinner {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+</style>
