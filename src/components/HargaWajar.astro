@@ -1,0 +1,156 @@
+---
+// Components: HargaWajar.astro
+---
+
+<div class="max-w-2xl mx-auto p-4 md:p-6 bg-[#0E1424] border border-gray-800 rounded-xl flex flex-col gap-4">
+  <h2 class="text-md md:text-lg font-bold text-white border-b border-gray-800 pb-2">Kalkulator Harga Wajar Saham (Graham Number)</h2>
+  
+  <div class="bg-[#151C2F] border-l-4 border-emerald-500 p-4 rounded-r-lg shadow-sm border border-gray-800">
+    <div class="flex gap-3">
+      <span class="text-xl md:text-2xl">💡</span>
+      <div>
+        <h3 class="font-bold text-emerald-400 text-sm md:text-base">Apa itu Graham Number?</h3>
+        <p class="text-xs md:text-sm text-gray-300 mt-1.5 leading-relaxed">
+          Metode klasik dari Benjamin Graham untuk mengukur nilai intrinsik saham berdasarkan kombinasi laba bersih per saham (EPS) dan nilai buku per saham (BVS). Angka konstanta 22,5 didapat dari batasan ideal Graham, yaitu rasio P/E maksimal 15 kali dikalikan rasio P/B maksimal 1,5 kali (15 * 1.5 = 22.5).
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 pb-2">
+    <div>
+      <label class="block text-xs md:text-sm text-gray-400 mb-1">Harga Saham Saat Ini (Rp)</label>
+      <input type="text" id="hargaSaatIni" placeholder="Contoh: 5.000" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+
+    <div>
+      <label class="block text-xs md:text-sm text-gray-400 mb-1">Laba Per Saham / EPS (Rp)</label>
+      <input type="text" id="epsSaham" placeholder="Contoh: 450" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+
+    <div>
+      <label class="block text-xs md:text-sm text-gray-400 mb-1">Nilai Buku Per Saham / BVS (Rp)</label>
+      <input type="text" id="bvsSaham" placeholder="Contoh: 3.200" class="w-full bg-[#151C2F] border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500" />
+    </div>
+
+    <div class="mt-2">
+      <button onclick="prosesHitungHargaWajar()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-lg transition cursor-pointer text-sm shadow-md">
+        Hitung Nilai Intrinsik
+      </button>
+    </div>
+  </div>
+
+  <div id="hasilWajarArea" class="hidden space-y-3 p-5 bg-[#0B101D] rounded-xl border border-gray-800">
+    <p class="text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400" id="labelOutput">Harga Wajar Graham:</p>
+    <div class="text-3xl font-extrabold" id="hasilOutput">Rp 0</div>
+    <div id="badgeStatus" class="inline-block px-2.5 py-1 rounded-md text-xs font-bold mt-1"></div>
+    <p class="text-xs md:text-sm text-gray-400 mt-2 border-t pt-3 border-gray-800 leading-relaxed" id="keteranganWajar"></p>
+  </div>
+</div>
+
+<script is:inline>
+  function formatRupiahWajar(angka) {
+    const numberString = angka.replace(/[^,\d]/g, '').toString();
+    const split = numberString.split(',');
+    const sisa = split[0].length % 3;
+    let rupiah = split[0].substr(0, sisa);
+    const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    if (ribuan) {
+      const separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+    return split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+  }
+
+  function hapusTitikWajar(value) {
+    return parseFloat(value.replace(/\./g, '')) || 0;
+  }
+
+  const setupAutoFormatWajar = () => {
+    const inputs = ['hargaSaatIni', 'epsSaham', 'bvsSaham'];
+    inputs.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('input', (e) => {
+          e.target.value = formatRupiahWajar(e.target.value);
+        });
+      }
+    });
+  };
+
+  // Inisialisasi awal format rupiah
+  setupAutoFormatWajar();
+  document.addEventListener('astro:page-load', setupAutoFormatWajar);
+
+  function prosesHitungHargaWajar() {
+    const hargaInput = document.getElementById('hargaSaatIni');
+    const epsInput = document.getElementById('epsSaham');
+    const bvsInput = document.getElementById('bvsSaham');
+
+    if (hargaInput && epsInput && bvsInput) {
+      const hargaMarket = hapusTitikWajar(hargaInput.value);
+      const eps = hapusTitikWajar(epsInput.value);
+      const bvs = hapusTitikWajar(bvsInput.value);
+      
+      if (hargaMarket <= 0 || eps <= 0 || bvs <= 0) {
+        alert('Mohon isi semua data input dengan angka lebih dari 0.');
+        return;
+      }
+
+      // Rumus Graham Number = akar(22.5 * EPS * BVS)
+      const hargaWajar = Math.sqrt(22.5 * eps * bvs);
+      const marginOfSafety = ((hargaWajar - hargaMarket) / hargaWajar) * 100;
+      const isUndervalued = hargaMarket < hargaWajar;
+
+      const hasilArea = document.getElementById('hasilWajarArea');
+      if (hasilArea) {
+        hasilArea.classList.remove('hidden');
+      }
+      
+      const elOutput = document.getElementById('hasilOutput');
+      const elBadge = document.getElementById('badgeStatus');
+      const elKeterangan = document.getElementById('keteranganWajar');
+
+      if (elOutput) {
+        elOutput.innerText = `Rp ${Math.round(hargaWajar).toLocaleString('id-ID')}`;
+        elOutput.className = `text-3xl font-extrabold ${isUndervalued ? 'text-emerald-500' : 'text-rose-500'}`;
+      }
+
+      if (elBadge) {
+        if (isUndervalued) {
+          elBadge.innerText = `UNDERVALUED (Diskon ${Math.abs(marginOfSafety).toFixed(1)}%)`;
+          elBadge.className = "inline-block px-2.5 py-1 rounded-md text-xs font-bold mt-1 bg-emerald-950/50 text-emerald-400 border border-emerald-900";
+        } else {
+          elBadge.innerText = `OVERVALUED (Premium ${Math.abs(marginOfSafety).toFixed(1)}%)`;
+          elBadge.className = "inline-block px-2.5 py-1 rounded-md text-xs font-bold mt-1 bg-rose-950/50 text-rose-400 border border-rose-900";
+        }
+      }
+
+      if (elKeterangan) {
+        if (isUndervalued) {
+          elKeterangan.innerHTML = `
+            Harga pasar saat ini (<span class="text-white font-bold">Rp ${hargaMarket.toLocaleString('id-ID')}</span>) lebih murah dibandingkan estimasi harga wajarnya. Terdapat <strong>Margin of Safety (MoS) sebesar ${marginOfSafety.toFixed(1)}%</strong>, mengindikasikan risiko penurunan yang cenderung lebih terukur.
+          `;
+        } else {
+          elKeterangan.innerHTML = `
+            Harga pasar saat ini (<span class="text-white font-bold">Rp ${hargaMarket.toLocaleString('id-ID')}</span>) sudah melampaui estimasi harga wajarnya sebesar <span class="text-rose-400 font-bold">${Math.abs(marginOfSafety).toFixed(1)}%</span>. Membeli di harga ini memiliki risiko *downside* yang relatif lebih tinggi berdasarkan fundamental aset saat ini.
+          `;
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Menghilangkan style bawaan jika ada sisa type="number" */
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .no-spinner {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+</style>
